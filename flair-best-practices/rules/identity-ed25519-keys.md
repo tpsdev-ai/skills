@@ -26,7 +26,7 @@ This writes:
 The Flair client constructs an `Authorization` header for every request:
 
 ```
-Authorization: TPS-Ed25519 <agentId>:<unixSecondsTimestamp>:<nonce>:<base64SignatureNoPad>
+Authorization: TPS-Ed25519 <agentId>:<unixMillisecondsTimestamp>:<nonce>:<base64SignatureNoPad>
 ```
 
 The signature payload is:
@@ -35,7 +35,9 @@ The signature payload is:
 <agentId>:<timestamp>:<nonce>:<METHOD>:<path-with-query>
 ```
 
-The server replays the signature with the registered public key. Mismatch → 401 `invalid_signature`.
+The server replays the signature with the registered public key. Mismatch → 401 `invalid_signature`. Timestamp drift outside the window → 401 `timestamp_out_of_window`.
+
+The timestamp is **unix milliseconds** (the value of `Date.now()`), not unix seconds. Off-by-1000x produces immediate `timestamp_out_of_window` rejection.
 
 If you use `@tpsdev-ai/flair-client`, signing is automatic — just provide `keyPath`. If you use `@tpsdev-ai/flair-mcp`, it's automatic. For raw HTTP, implement the signing shape above.
 
