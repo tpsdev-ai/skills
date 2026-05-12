@@ -1,35 +1,48 @@
 # TPS Skills
 
-Agent skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenClaw](https://openclaw.ai), and other AI agents.
+Skill packs for [TPS](https://github.com/tpsdev-ai/cli) and [Flair](https://github.com/tpsdev-ai/flair) — best practices for any agent harness (Claude Code, OpenClaw, Cursor, n8n, MCP-aware agents, etc.).
 
 ## Install
 
-```bash
-# Claude Code
-npx skills add tpsdev-ai/skills/ascii-boxes
+### Via `tps skill add-pack` (TPS-hosted agents)
 
-# OpenClaw
-# Copy the skill folder to your OpenClaw skills directory
+```bash
+tps skill add-pack @tpsdev-ai/skills --agent <agent-id>
 ```
 
-## Skills
+Registers the orientation skill on the specified agent. Use `--include-rules` to register specific rule files alongside the summary.
 
-### ascii-boxes
+### Via `npx skills add` (Claude Code, Cursor, Windsurf, Continue, Junie)
 
-Generate and validate ASCII box diagrams with Unicode box-drawing characters.
-
-**Generate** a diagram from a simple text format:
 ```bash
-python3 ascii-boxes/scripts/draw-box.py input.txt
+npx skills add tpsdev-ai/skills/tps-best-practices
+npx skills add tpsdev-ai/skills/flair-best-practices
 ```
 
-**Validate** an existing diagram:
-```bash
-python3 ascii-boxes/scripts/check-box-align.py README.md
+### Programmatic (Node/TS)
+
+```ts
+import { ruleNames, rules, skillSummary } from "@tpsdev-ai/skills";
 ```
 
-LLMs can't reliably count display columns (box-drawing chars are 3 bytes but 1 column). These tools solve that.
+## Available skills
+
+### [tps-best-practices](tps-best-practices/SKILL.md)
+
+How to use TPS as a product — agent provisioning, inter-agent mail, skill governance, branch-office isolation, runtime providers.
+
+### [flair-best-practices](flair-best-practices/SKILL.md)
+
+How to use Flair as a product — writing/reading memory, Soul records, Ed25519 identity, federation, MCP integration.
+
+### [ascii-boxes](ascii-boxes/SKILL.md)
+
+Generate and validate ASCII box diagrams with Unicode box-drawing characters (pre-existing skill).
+
+## Layered usage
+
+`@tpsdev-ai/skills` is product-level — applicable to anyone running TPS/Flair. Teams typically layer a private skill pack on top of this for team-specific operating discipline (review process, on-call patterns, etc.).
 
 ## License
 
-Apache 2.0
+Apache 2.0. See [LICENSE](LICENSE).

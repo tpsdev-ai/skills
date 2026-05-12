@@ -1,0 +1,44 @@
+{
+  "name": "@tpsdev-ai/skills",
+  "version": "0.1.0",
+  "description": "Skill packs for TPS and Flair — best practices for any agent harness",
+  "homepage": "https://github.com/tpsdev-ai/skills",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tpsdev-ai/skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tpsdev-ai/skills/issues"
+  },
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "tps-best-practices",
+    "flair-best-practices",
+    "ascii-boxes"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "validate": "npm run build && node scripts/validate-skills.mjs"
+  },
+  "keywords": [
+    "tps",
+    "flair",
+    "skills",
+    "agent",
+    "memory",
+    "claude-code",
+    "openclaw",
+    "mcp"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
