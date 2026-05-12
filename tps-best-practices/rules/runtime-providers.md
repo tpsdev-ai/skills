@@ -29,7 +29,7 @@ llm:
 
 When `tps agent start --id alice` runs, the chosen runtime is invoked with credentials sourced from:
 
-- For CLI runtimes (claude/codex/gemini): the user's local OAuth token, scoped via `tps agent run-as`
+- For CLI runtimes (claude/codex/gemini): the runtime picks up its OAuth token from a standard local credential file (e.g., `~/.claude/.credentials.json` for Claude Code) — each agent's wrapper should point at an *agent-specific* credential file (not a shared one — see "OAuth chain isolation" below)
 - For openclaw: the agent's `auth-profiles.json` (per-agent, per-provider)
 - For pi: API key from env var (`OLLAMA_API_KEY`, etc.), supplied by the wrapper script
 

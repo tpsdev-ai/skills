@@ -21,7 +21,7 @@ tps agent create --id alice --name "Alice" --model "ollama-cloud/deepseek-v4-pro
 
 What this does:
 
-1. Generates an Ed25519 keypair → `~/.tps/identity/alice.{key,pub,seed}`
+1. Generates an Ed25519 keypair → `~/.tps/identity/alice.{key,pub}` (32-byte raw seed + raw public key) plus a `~/.tps/identity/alice.meta.json` with creation metadata
 2. Generates an x25519 pair for ECDH (used by some plugins) → `~/.tps/identity/alice.x25519.{key,pub}`
 3. Registers `alice` in the Flair `Agent` table (id, name, publicKey, role, createdAt)
 4. Writes config to `~/.tps/agents/alice/agent.yaml`
@@ -52,7 +52,7 @@ The agent config keeps `provider` + `model` as the LLM target. The runtime (Clau
 
 ## Anti-Patterns
 
-- **Re-creating an existing agent.** `tps agent create` won't overwrite. To rotate identity, use `tps agent rotate-key`. To fully decommission + recreate, `tps agent decommission --id <id>` first.
+- **Re-creating an existing agent.** `tps agent create` won't overwrite. To rotate identity, follow the manual key-rotation procedure in `identity-ed25519-keys` (the `tps agent rotate-key` wrapper is a planned future addition). To fully decommission + recreate, `tps agent decommission --id <id>` first.
 - **Generating an identity offline + uploading separately.** The combined `tps agent create` flow keeps the local key + Flair Agent record in sync. Splitting them risks mismatch (the most common cause of `401 invalid_signature`).
 
 ## See Also
