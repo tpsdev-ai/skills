@@ -39,20 +39,44 @@ The server replays the signature with the registered public key. Mismatch → 40
 
 If you use `@tpsdev-ai/flair-client`, signing is automatic — just provide `keyPath`. If you use `@tpsdev-ai/flair-mcp`, it's automatic. For raw HTTP, implement the signing shape above.
 
-## Rotate
+## Key rotation (manual procedure)
 
-```bash
-tps agent rotate-key --id myagent
-```
+TPS CLI does not yet ship a one-shot `agent rotate-key` command. The current-state procedure is:
 
-Behavior:
+1. Generate a new keypair into a staging path so the old key keeps working until cutover:
+   ```bash
+   # Using Node's crypto to mint an Ed25519 seed:
+   node -e "
+     const c = require('node:crypto');
+     const { publicKey, privateKey } = c.generateKeyPairSync('ed25519');
+     const seed = privateKey.export({ format: 'der', type: 'pkcs8' }).slice(-32);
+     const pub = publicKey.export({ format: 'der', type: 'spki' }).slice(-32);
+     require('node:fs').writeFileSync('~/.tps/identity/myagent.key.new'.replace('~', process.env.HOME), seed);
+     require('node:fs').writeFileSync('~/.tps/identity/myagent.pub.new'.replace('~', process.env.HOME), pub);
+     console.log('pub:', pub.toString('base64').replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, ''));
+   "
+   chmod 600 ~/.tps/identity/myagent.key.new
+   ```
 
-1. Generate a new keypair into a `~/.tps/identity/myagent.key.new` staging path
-2. `PATCH /Agent/<id>` to update the registered publicKey (signed with the OLD key — last legitimate use)
-3. Move `.new` → primary; archive old key with timestamp suffix
-4. Verify with a `GET /Memory/?agentId=myagent` probe under the new key
+2. PATCH the `Agent` record in Flair to use the new public key (signed with the OLD key — last legitimate use):
+   ```bash
+   curl -X PUT "$FLAIR_URL/Agent/myagent" \
+     -H "Authorization: TPS-Ed25519 ..." \
+     -H "Content-Type: application/json" \
+     -d '{"publicKey": "<new-pub-base64url-no-pad>", ...}'
+   ```
 
-If a rotation fails midway, the old key is still good — only the staging copy is dirty. Delete `.new` and retry.
+3. Move the new key into place + archive the old:
+   ```bash
+   mv ~/.tps/identity/myagent.key ~/.tps/identity/myagent.key.bak-$(date +%Y%m%dT%H%M%S)
+   mv ~/.tps/identity/myagent.key.new ~/.tps/identity/myagent.key
+   mv ~/.tps/identity/myagent.pub ~/.tps/identity/myagent.pub.bak-$(date +%Y%m%dT%H%M%S)
+   mv ~/.tps/identity/myagent.pub.new ~/.tps/identity/myagent.pub
+   ```
+
+4. Verify with a `GET /Memory/?agentId=myagent` probe under the new key.
+
+A `tps agent rotate-key` command that wraps this is a planned addition to the TPS CLI but not shipped today.
 
 ## When public key in Flair diverges from local
 
@@ -63,10 +87,10 @@ Symptom: requests fail with `401 invalid_signature` even though `*.key` and `*.p
 base64 -i ~/.tps/identity/myagent.pub | tr '+/' '-_' | tr -d '='
 
 # Remote (via admin auth or any other authorized agent)
-curl -s "http://127.0.0.1:9926/Agent/myagent" -u "admin:..." | jq -r '.publicKey'
+curl -s "$FLAIR_URL/Agent/myagent" -u "admin:..." | jq -r '.publicKey'
 ```
 
-If they differ, the agent was likely re-provisioned without re-registering, or the local key file is stale. Re-register via `tps agent re-register --id myagent`.
+If they differ, the agent was likely re-provisioned without re-registering, OR the local key file is stale, OR the canonical key lives on a different host. Reconciliation: either re-mint the agent record in Flair to match the local key (admin-auth `PUT /Agent/<id>`), or fetch the canonical key from the host that holds it.
 
 ## Anti-Patterns
 
