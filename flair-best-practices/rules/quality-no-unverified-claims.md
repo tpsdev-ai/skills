@@ -54,7 +54,6 @@ If a claim ships and is later found to be wrong:
 2. Note the hallucination class in a memory or skill rule (this one).
 3. Do not blame "the model" generically. Identify the specific shape of the over-extrapolation so the next instance is easier to catch.
 
-## See also
+## Related disciplines
 
-- `repro-before-asserting-vendor-bugs` — the same rule applied to upstream claims
-- `name-workarounds-as-workarounds` — being precise about what is fixed vs. worked around
+The same standard applies to claims about *external* tools and vendor behavior — verify with a repro before asserting. And when a fix is actually a workaround for someone else's bug, name it as a workaround in sentence one, not framed as the root-cause fix.
