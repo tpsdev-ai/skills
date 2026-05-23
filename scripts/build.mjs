@@ -7,9 +7,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
 mkdirSync(dist, { recursive: true });
 
-// Two skills, each with rules/. Skill folders contain the SKILL.md (the orientation
+// Skill packs, each with rules/. Skill folders contain the SKILL.md (the orientation
 // doc that gets registered as the canonical summary).
-const skillFolders = ["tps-best-practices", "flair-best-practices"];
+const skillFolders = ["tps-best-practices", "flair-best-practices", "intel-gathering"];
 
 const ruleNames = [];
 const rules = {};

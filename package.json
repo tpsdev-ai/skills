@@ -22,6 +22,7 @@
     "dist",
     "tps-best-practices",
     "flair-best-practices",
+    "intel-gathering",
     "ascii-boxes"
   ],
   "scripts": {
