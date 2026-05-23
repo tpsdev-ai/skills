@@ -35,6 +35,10 @@ How to use TPS as a product — agent provisioning, inter-agent mail, skill gove
 
 How to use Flair as a product — writing/reading memory, Soul records, Ed25519 identity, federation, MCP integration.
 
+### [intel-gathering](intel-gathering/SKILL.md)
+
+Best practices for agents that periodically poll external sources — GitHub releases, vendor changelogs, RSS/atom feeds — for briefings or monitoring. Covers PAT-based auth, known-good vendor feeds, polling cadence, and ETag caching.
+
 ### [ascii-boxes](ascii-boxes/SKILL.md)
 
 Generate and validate ASCII box diagrams with Unicode box-drawing characters (pre-existing skill).

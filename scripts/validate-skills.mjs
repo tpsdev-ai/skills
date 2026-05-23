@@ -9,7 +9,7 @@ let errors = 0;
 
 const SKILL_BYTE_CAP = 8192;
 
-const skills = ["tps-best-practices", "flair-best-practices"];
+const skills = ["tps-best-practices", "flair-best-practices", "intel-gathering"];
 
 for (const skill of skills) {
   const skillMd = join(root, skill, "SKILL.md");
